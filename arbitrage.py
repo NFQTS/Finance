@@ -1,15 +1,18 @@
-#import requests
+import requests
 import json
 import random
 import os
 
 # Initialize the POLYGON_API variable if you plan to use it.
-# POLYGON_API = os.environ["polygon_api"]
+POLYGON_API = os.environ["polygon_api"]
 # SOLANA_API = os.environ["solana_api"]
 # ETHEREUM_API = os.environ["eth_api"]
 # BITCOIN_API = os.environ["btc_api"]
-crypto_tokens = ["Matic", "Sol", "Eth", "Btc"]
-ml_tools = ["keras", "tensorflow", "skLearn", "pytorch"]
+# crypto_tokens = ["Matic", "Sol", "Eth", "Btc"]
+# ml_tools = ["tensorflow", "keras", "skLearn", "pytorch"]
+crypto_tokens = ["Matic"]
+ml_tools = ["tensorflow"]
+current_best_models = []
 
 class arb_batch():
     """ An object consisting of arbitrage models to use for trading assets."""
@@ -21,7 +24,6 @@ class arb_batch():
             for token in tokens:
                 self.models["Crypto"][tool][token] = {"Best": None, "Challenger": None, "Test": None, "Control": None}
 
-current_best_models = []
 
 def scan_crypto_prices(coin):
     """ Scans for updated crypto prices and saves the relevant data."""
@@ -30,38 +32,57 @@ def scan_crypto_prices(coin):
         matic_market_cap = get_matic_market_cap()
         print(f"Matic price: {matic_price}")
         print(f"Matic market cap: {matic_market_cap}")
-    elif coin == "Sol":
-        pass
-    elif coin == "Eth":
-        pass
-    elif coin == "Btc":
-        pass
+
     else:
         print("Error wrong coin entered or something.")
 
 def get_matic_price():
     url = f"https://api.polygonscan.com/api?module=stats&action=maticprice&apikey={POLYGON_API}"
-    matic_price = 1
-    return matic_price
-
-def get_matic_market_cap(price):
-    url = f"https://api.polygonscan.com/api?module=stats&action=maticsupply&apikey={POLYGON_API}"
-    matic_market_cap = url_result * price
-    return matic_market_cap
-
-def get_sol_price():
-    url = f"https://api.polygonscan.com/api?module=stats&action=maticprice&apikey={POLYGON_API}"
-    matic_price = 1
-    return matic_price
-
-def get_sol_market_cap(price):
-    url = f"https://api.polygonscan.com/api?module=stats&action=maticsupply&apikey={POLYGON_API}"
-    matic_market_cap = url_result * price
-    return matic_market_cap
     
-def paper_training(asset_type):
-    """ Tests the current model in a simulated real-life environment to compare performance."""
-    pass
+    try:
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+            matic_price = data['result']['maticusd']
+            
+            if matic_price is not None:
+                return float(matic_price)
+            else:
+                print("Error: Matic price data not found in the response.")
+                return None
+        else:
+            print("Error: Unable to retrieve Matic price data.")
+            return None
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
+
+def get_matic_supply():
+    url = f"https://api.polygonscan.com/api?module=stats&action=maticsupply&apikey={POLYGON_API}"
+    
+    try:
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+            matic_supply = data['result']
+            
+            if matic_supply is not None:
+                return int(matic_supply)
+            else:
+                print("Error: Matic price data not found in the response.")
+                return None
+        else:
+            print("Error: Unable to retrieve Matic price data.")
+            return None
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
 
 def build_arb_batch(asset_lists, ml_tool_list):
     """ Builds arbitrage model batches to test. Should test exchange-based arbitrage, triangular arbitrage (USD -> ETH -> BTC), and variations of hybrids."""
@@ -101,12 +122,5 @@ def generate_new_model(ml_tool, coin):
     print(f"Generating {ml_tool} {coin} model.")
     new_model = 1
     return new_model
-
-def arbitrage_crypto(coin_type):
-    pass
-
-def arbitrage_fiat(type):
-    pass
     
-def optimize_neural_network():
-    pass
+
