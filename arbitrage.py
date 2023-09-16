@@ -8,6 +8,8 @@ import os
 # ETHEREUM_API = os.environ["eth_api"]
 # BITCOIN_API = os.environ["btc_api"]
 crypto_tokens = ["Matic", "Sol", "Eth", "Btc"]
+
+current_best_models = []
 def scan_crypto_prices(coin):
     """ Scans for updated crypto prices and saves the relevant data."""
     if coin == "Matic":
@@ -48,9 +50,14 @@ def paper_training(asset_type):
     """ Tests the current model in a simulated real life environment to compare performance."""
     pass
 
-def build_arb_model():
-    """ Builds a new arbitrage model to test. Should test exchange-based arbitrage, triangular arbitrage (USD -> ETH -> BTC), and variations of hybrids."""
-    
+def build_arb_batch():
+    """ Builds arbitrage model batches to test. Should test exchange-based arbitrage, triangular arbitrage (USD -> ETH -> BTC), and variations of hybrids."""
+    print("Need to check for a list of existing models to build/test against.")
+    if len(current_best_models) == 0:
+        new_batch = arb_batch()
+        for model in new_batch.models["Crypto"]:
+            if new_batch.models["Crypto"][model] == None:
+                print("Creating a new random model to use as a filler.")
     # Check for previous data to try to inherit working methods.
     # Want to test models against each other in ways that can help us reverse engineer performance increases.
     # 4 layered approach for now:
@@ -61,7 +68,16 @@ def build_arb_model():
     # Worst performer gets dropped
     # Models are tested and mutated in a variety of time frames
     # 10 epochs, 100 epochs, 1000 epochs, 10000 epochs. Each with different tests and mutation schedules.
+    # Will probably do batches to reduce errors/ remove crazy rng.
     pass
+
+class arb_batch:
+    """ An object consisting of arbitrage models to use for trading assets."""
+    print("Need to check for a list of existing models to build/test against.")
+    def __init__(self):
+        self.models = {"Crypto": {"Best": None, "Challenger": None, "Test": None, "Control": None}}
+        
+
 
 def arbitrage_crypto(coin_type):
     pass
