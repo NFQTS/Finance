@@ -11,6 +11,7 @@ risk_percentage = 0.005
 MAX_RUNTIME_SECONDS = 60  # Maximum runtime in seconds (1 hour)
 order_depth = 15
 def load_exchange_orders():
+    """ If a json file exists with order book data, load it."""
     try:
         with open('exchange_order_data.json', 'r') as json_file:
             return json.load(json_file)
@@ -24,12 +25,14 @@ highest_arb_opp = 0
 
 # Function to save exchange orders to JSON
 def save_exchange_orders():
+    """Saves historical order book data for training/ analysis."""
     # Serialize the exchange_order_dict to JSON and write it to a file
     with open('exchange_order_data.json', 'w') as json_file:
         json.dump(exchange_order_dict, json_file, indent=4)
     print("Exchange order data saved to 'exchange_order_data.json'.")
 
 def detect_arbitrage_opportunity(pair):
+    """ Scans the Binancs US exchange for the order books of crypto pairs and looks for arbitrage opportunities."""
     try:
         # Fetch order book data
         exchange_binanceus = ccxt.binanceus()
@@ -58,6 +61,7 @@ def detect_arbitrage_opportunity(pair):
         print(f"Error: {str(e)}")
 
 def store_exchange_orders(exchange, data, asset_pair):
+    """ Formats order book data to fit our data schema."""
     print(f"Storing {exchange} order book data for {asset_pair}")
     exchange_str = str(exchange)
 
