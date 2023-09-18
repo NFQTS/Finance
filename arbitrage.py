@@ -1,4 +1,4 @@
-Most of that is probably crap... idk... working on some more interesting ways to approach all of this.
+### Deprecated for now.
 
 # import requests
 # import json
